@@ -45,17 +45,17 @@ namespace AcronymValidator
                         nextUnusedProductName = lastUsedProductName;
                     }
 
-                    if (nextUnusedProductName.Name.Contains(currentChar))
+                    if (WillBeAbletoSatisfyRequiredValues() && nextUnusedProductName.Name.Contains(currentChar))
                     {
                         productNamesUsed[nextUnusedProductName.Index].HasBeenChecked = true;
-                        productNamesUsed[nextUnusedProductName.Index].Name = PopupUntilCharValueFound(currentChar, nextUnusedProductName.Name);
+                        productNamesUsed[nextUnusedProductName.Index].Name = PopUntilCharValueFound(currentChar, nextUnusedProductName.Name);
                         continue;
                     }
                     else
                     {
                         if (lastUsedProductName != null && lastUsedProductName.Name.Contains(currentChar))
                         {
-                            productNamesUsed[lastUsedProductName.Index].Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
+                            productNamesUsed[lastUsedProductName.Index].Name = PopUntilCharValueFound(currentChar, lastUsedProductName.Name);
                             continue;
                         }
                         else
@@ -75,7 +75,7 @@ namespace AcronymValidator
             return isValid;
         }
 
-        private static Stack<char> PopupUntilCharValueFound(char currentChar, Stack<char> stackToCompare)
+        private static Stack<char> PopUntilCharValueFound(char currentChar, Stack<char> stackToCompare)
         {
             var stackToPop = new Stack<char>(new Stack<char>(stackToCompare));
             
@@ -92,6 +92,11 @@ namespace AcronymValidator
                 }
             }
             return stackToPop;
+        }
+
+        private static bool WillBeAbletoSatisfyRequiredValues(string remainderOfAcronym, Stack<char> stackToCheck)
+        {
+            
         }
     }
 }
