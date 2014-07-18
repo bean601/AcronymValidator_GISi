@@ -8,7 +8,6 @@ namespace AcronymValidator
 {
     public class ProductName
     {
-        public int Index { get; set; }
         public Stack<char> Name { get; set; }
         public bool HasBeenChecked { get; set; }
     }
@@ -20,14 +19,11 @@ namespace AcronymValidator
         public static bool isValid(string acronym, List<string> productName)
         {
             var isValid = true;
-
             var productNamesUsed = new List<ProductName>();
-            var i = 0;
-
+            
             productName.ForEach(x =>
                 productNamesUsed.Add(new ProductName()
                 {
-                    Index = i++,
                     Name = new Stack<char>(x.ToCharArray().Reverse()),
                     HasBeenChecked = false
                 }));
@@ -47,15 +43,15 @@ namespace AcronymValidator
 
                     if (nextUnusedProductName.Name.Contains(currentChar))
                     {
-                        productNamesUsed[nextUnusedProductName.Index].HasBeenChecked = true;
-                        productNamesUsed[nextUnusedProductName.Index].Name = PopupUntilCharValueFound(currentChar, nextUnusedProductName.Name);
+                        nextUnusedProductName.HasBeenChecked = true;
+                        nextUnusedProductName.Name = PopupUntilCharValueFound(currentChar, nextUnusedProductName.Name);
                         continue;
                     }
                     else
                     {
                         if (lastUsedProductName != null && lastUsedProductName.Name.Contains(currentChar))
                         {
-                            productNamesUsed[lastUsedProductName.Index].Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
+                            lastUsedProductName.Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
                             continue;
                         }
                         else
@@ -77,19 +73,12 @@ namespace AcronymValidator
 
         private static Stack<char> PopupUntilCharValueFound(char currentChar, Stack<char> stackToCompare)
         {
-            var stackToPop = new Stack<char>(new Stack<char>(stackToCompare));
+            var stackToPop = new Stack<char>(stackToCompare.Reverse());
 
             foreach (var charToPop in stackToCompare)
             {
-                if (charToPop != currentChar)
-                {
-                    stackToPop.Pop();
-                }
-                else
-                {
-                    stackToPop.Pop();
-                    break;
-                }
+                stackToPop.Pop();                
+                if (charToPop == currentChar) { break; }
             }
             return stackToPop;
         }
