@@ -32,31 +32,39 @@ namespace AcronymValidator
                     HasBeenChecked = false
                 }));
 
-            foreach (var currentChar in acronym)
+            if (productName.Count > 0)
             {
-                var nextUnusedProductName = productNamesUsed.Where(x => !x.HasBeenChecked).FirstOrDefault();
-                var lastUsedProductName = productNamesUsed.Where(x => x.HasBeenChecked).LastOrDefault();
+                foreach (var currentChar in acronym)
+                {
+                    var nextUnusedProductName = productNamesUsed.Where(x => !x.HasBeenChecked).FirstOrDefault();
+                    var lastUsedProductName = productNamesUsed.Where(x => x.HasBeenChecked).LastOrDefault();
 
-                if (nextUnusedProductName == null)
-                {
-                    //this is very unclear, fix this
-                    nextUnusedProductName = lastUsedProductName;
-                }
-
-                if (nextUnusedProductName.Name.Contains(currentChar))
-                {
-                    productNamesUsed[nextUnusedProductName.Index].HasBeenChecked = true;
-                    productNamesUsed[nextUnusedProductName.Index].Name = PopupUntilCharValueFound(currentChar, nextUnusedProductName.Name);
-                    continue;
-                }
-                else
-                {
-                    if (lastUsedProductName != null)
+                    if (nextUnusedProductName == null)
                     {
-                        if (lastUsedProductName.Name.Contains(currentChar))
+                        //this is very unclear, fix this
+                        nextUnusedProductName = lastUsedProductName;
+                    }
+
+                    if (nextUnusedProductName.Name.Contains(currentChar))
+                    {
+                        productNamesUsed[nextUnusedProductName.Index].HasBeenChecked = true;
+                        productNamesUsed[nextUnusedProductName.Index].Name = PopupUntilCharValueFound(currentChar, nextUnusedProductName.Name);
+                        continue;
+                    }
+                    else
+                    {
+                        if (lastUsedProductName != null)
                         {
-                            productNamesUsed[lastUsedProductName.Index].Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
-                            continue;
+                            if (lastUsedProductName.Name.Contains(currentChar))
+                            {
+                                productNamesUsed[lastUsedProductName.Index].Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
+                                continue;
+                            }
+                            else
+                            {
+                                isValid = false;
+                                break;
+                            }
                         }
                         else
                         {
@@ -64,15 +72,10 @@ namespace AcronymValidator
                             break;
                         }
                     }
-                    else
-                    {
-                        isValid = false;
-                        break;
-                    } 
                 }
             }
 
-            if (productNamesUsed.Any(x => !x.HasBeenChecked))
+            if (productNamesUsed.Count == 0 || productNamesUsed.Any(x => !x.HasBeenChecked))
             {
                 isValid = false;
             }
