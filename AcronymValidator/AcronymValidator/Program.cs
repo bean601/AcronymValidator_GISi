@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace AcronymValidator
 {
+    public class ProductName
+    {
+        public int Index { get; set; }
+        public Stack<char> Name { get; set; }
+        public bool HasBeenChecked { get; set; }
+    }
+
     public class Utility
     {
         static void Main(string[] args) { }
@@ -14,35 +21,41 @@ namespace AcronymValidator
         {
             var isValid = true;
 
-            //new dictionary for names with a boolean as a flag to be set if the word has any chars used in the acronym
-            var productNamesUsed = productName.ToDictionary(x => x, x => false);
+            var productNamesUsed = new List<ProductName>();
+            var i = 0;
+
+            productName.ForEach(x => 
+                productNamesUsed.Add(new ProductName() 
+                { 
+                    Index = i++,
+                    Name = new Stack<char>(x.ToCharArray().Reverse()), 
+                    HasBeenChecked = false
+                }));
 
             foreach (var currentChar in acronym)
             {
-                var nextUnusedProductName = productNamesUsed
-                    .Where(x => x.Value == false)
-                    .FirstOrDefault();
+                var nextUnusedProductName = productNamesUsed.Where(x => !x.HasBeenChecked).FirstOrDefault();
+                var lastUsedProductName = productNamesUsed.Where(x => x.HasBeenChecked).LastOrDefault();
 
-                 var lastUsedProductName = productNamesUsed
-                        .Where(x => x.Value == true)
-                        .LastOrDefault();
-
-                if (string.IsNullOrEmpty(nextUnusedProductName.Key))
+                if (nextUnusedProductName == null)
                 {
+                    //this is very unclear, fix this
                     nextUnusedProductName = lastUsedProductName;
                 }
 
-                if (nextUnusedProductName.Key.Contains(currentChar))
+                if (nextUnusedProductName.Name.Contains(currentChar))
                 {
-                    productNamesUsed[nextUnusedProductName.Key] = true;
+                    productNamesUsed[nextUnusedProductName.Index].HasBeenChecked = true;
+                    productNamesUsed[nextUnusedProductName.Index].Name = PopupUntilCharValueFound(currentChar, nextUnusedProductName.Name);
                     continue;
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(lastUsedProductName.Key))
+                    if (lastUsedProductName != null)
                     {
-                        if (lastUsedProductName.Key.Contains(currentChar))
+                        if (lastUsedProductName.Name.Contains(currentChar))
                         {
+                            productNamesUsed[lastUsedProductName.Index].Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
                             continue;
                         }
                         else
@@ -59,12 +72,31 @@ namespace AcronymValidator
                 }
             }
 
-            if (productNamesUsed.Any(x => x.Value == false))
+            if (productNamesUsed.Any(x => !x.HasBeenChecked))
             {
                 isValid = false;
             }
 
             return isValid;
+        }
+
+        private static Stack<char> PopupUntilCharValueFound(char currentChar, Stack<char> stackToCompare)
+        {
+            var stackToPop = new Stack<char>(new Stack<char>(stackToCompare));
+            
+            foreach (var charToPop in stackToCompare)
+            {
+                if (charToPop != currentChar) 
+                { 
+                    stackToPop.Pop(); 
+                }
+                else
+                {
+                    stackToPop.Pop();
+                    break;
+                }
+            }
+            return stackToPop;
         }
     }
 }
