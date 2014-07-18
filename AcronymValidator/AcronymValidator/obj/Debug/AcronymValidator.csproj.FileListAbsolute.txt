@@ -1,0 +1,6 @@
+C:\Users\Jeremy\Desktop\AcronymValidator_GISi\AcronymValidator\AcronymValidator\bin\Debug\AcronymValidator.exe.config
+C:\Users\Jeremy\Desktop\AcronymValidator_GISi\AcronymValidator\AcronymValidator\bin\Debug\AcronymValidator.exe
+C:\Users\Jeremy\Desktop\AcronymValidator_GISi\AcronymValidator\AcronymValidator\bin\Debug\AcronymValidator.pdb
+C:\Users\Jeremy\Desktop\AcronymValidator_GISi\AcronymValidator\AcronymValidator\obj\Debug\AcronymValidator.csprojResolveAssemblyReference.cache
+C:\Users\Jeremy\Desktop\AcronymValidator_GISi\AcronymValidator\AcronymValidator\obj\Debug\AcronymValidator.exe
+C:\Users\Jeremy\Desktop\AcronymValidator_GISi\AcronymValidator\AcronymValidator\obj\Debug\AcronymValidator.pdb
