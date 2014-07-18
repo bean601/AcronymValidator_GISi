@@ -53,24 +53,16 @@ namespace AcronymValidator
                     }
                     else
                     {
-                        if (lastUsedProductName != null)
+                        if (lastUsedProductName != null && lastUsedProductName.Name.Contains(currentChar))
                         {
-                            if (lastUsedProductName.Name.Contains(currentChar))
-                            {
-                                productNamesUsed[lastUsedProductName.Index].Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
-                                continue;
-                            }
-                            else
-                            {
-                                isValid = false;
-                                break;
-                            }
+                            productNamesUsed[lastUsedProductName.Index].Name = PopupUntilCharValueFound(currentChar, lastUsedProductName.Name);
+                            continue;
                         }
                         else
                         {
                             isValid = false;
                             break;
-                        }
+                        }                     
                     }
                 }
             }
