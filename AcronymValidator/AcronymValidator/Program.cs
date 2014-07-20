@@ -35,8 +35,10 @@ namespace AcronymValidator
                     var nextUnusedProductName = productNamesUsed.Where(x => !x.HasBeenChecked).FirstOrDefault();
                     var lastUsedProductName = productNamesUsed.Where(x => x.HasBeenChecked).LastOrDefault();
                     nextUnusedProductName = nextUnusedProductName ?? lastUsedProductName;
-                                       
-                    if (WillBeAbletoSatisfyRequiredValues(acronym.Substring(i, acronym.Length - i), productNamesUsed.Where(x => !x.HasBeenChecked)) 
+                    
+                    var remainingAcronym = acronym.Substring(i, acronym.Length - i);
+
+                    if (WillBeAbletoSatisfyRequiredValues(remainingAcronym, productNamesUsed.Where(x => !x.HasBeenChecked)) 
                         && nextUnusedProductName.Name.Contains(acronym[i]))
                     {
                         nextUnusedProductName.HasBeenChecked = true;
