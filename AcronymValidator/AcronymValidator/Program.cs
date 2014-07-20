@@ -8,7 +8,6 @@ namespace AcronymValidator
 {
     public class ProductName
     {
-        public int Index { get; set; }
         public Stack<char> Name { get; set; }
         public bool HasBeenChecked { get; set; }
     }
@@ -20,42 +19,35 @@ namespace AcronymValidator
         public static bool isValid(string acronym, List<string> productName)
         {
             var isValid = true;
-
             var productNamesUsed = new List<ProductName>();
-            var i = 0;
 
             productName.ForEach(x => 
                 productNamesUsed.Add(new ProductName() 
                 { 
-                    Index = i++,
                     Name = new Stack<char>(x.ToCharArray().Reverse()), 
                     HasBeenChecked = false
                 }));
 
             if (productName.Count > 0)
             {
-                foreach (var currentChar in acronym)
+                for (int i = 0; i < acronym.Length; i++)
                 {
                     var nextUnusedProductName = productNamesUsed.Where(x => !x.HasBeenChecked).FirstOrDefault();
                     var lastUsedProductName = productNamesUsed.Where(x => x.HasBeenChecked).LastOrDefault();
-
-                    if (nextUnusedProductName == null)
+                    nextUnusedProductName = nextUnusedProductName ?? lastUsedProductName;
+                                       
+                    if (WillBeAbletoSatisfyRequiredValues(acronym.Substring(i, acronym.Length - i), productNamesUsed.Where(x => !x.HasBeenChecked)) 
+                        && nextUnusedProductName.Name.Contains(acronym[i]))
                     {
-                        //this is very unclear, fix this
-                        nextUnusedProductName = lastUsedProductName;
-                    }
-
-                    if (WillBeAbletoSatisfyRequiredValues() && nextUnusedProductName.Name.Contains(currentChar))
-                    {
-                        productNamesUsed[nextUnusedProductName.Index].HasBeenChecked = true;
-                        productNamesUsed[nextUnusedProductName.Index].Name = PopUntilCharValueFound(currentChar, nextUnusedProductName.Name);
+                        nextUnusedProductName.HasBeenChecked = true;
+                        nextUnusedProductName.Name = PopUntilCharValueFound(acronym[i], nextUnusedProductName.Name);
                         continue;
                     }
                     else
                     {
-                        if (lastUsedProductName != null && lastUsedProductName.Name.Contains(currentChar))
+                        if (lastUsedProductName != null && lastUsedProductName.Name.Contains(acronym[i]))
                         {
-                            productNamesUsed[lastUsedProductName.Index].Name = PopUntilCharValueFound(currentChar, lastUsedProductName.Name);
+                            lastUsedProductName.Name = PopUntilCharValueFound(acronym[i], lastUsedProductName.Name);
                             continue;
                         }
                         else
@@ -77,26 +69,25 @@ namespace AcronymValidator
 
         private static Stack<char> PopUntilCharValueFound(char currentChar, Stack<char> stackToCompare)
         {
-            var stackToPop = new Stack<char>(new Stack<char>(stackToCompare));
+            var stackToPop = new Stack<char>(stackToCompare.Reverse());
             
             foreach (var charToPop in stackToCompare)
             {
-                if (charToPop != currentChar) 
-                { 
-                    stackToPop.Pop(); 
-                }
-                else
-                {
-                    stackToPop.Pop();
-                    break;
-                }
+                stackToPop.Pop(); 
+                if (charToPop == currentChar) { break; }
             }
+
             return stackToPop;
         }
 
-        private static bool WillBeAbletoSatisfyRequiredValues(string remainderOfAcronym, Stack<char> stackToCheck)
+        private static bool WillBeAbletoSatisfyRequiredValues(string remainderOfAcronym, IEnumerable<ProductName> remainingNames)
         {
-            
+            var remainingProductName = string.Join("", remainingNames.Select(x => new String(x.Name.ToArray())));
+            var currentCharBeingChecked = remainderOfAcronym.First();
+
+            var numberOfCharNeeded = remainderOfAcronym.Where(x => x == currentCharBeingChecked).Count();
+            var numberOfMatchingChars = remainingProductName.Where(x => x == currentCharBeingChecked).Count();
+            return numberOfMatchingChars >= numberOfCharNeeded;
         }
     }
 }
